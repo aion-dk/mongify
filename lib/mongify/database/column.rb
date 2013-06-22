@@ -80,7 +80,7 @@ module Mongify
       attr_reader :sql_name, :type, :options
       
       #List of available options for a column
-      AVAILABLE_OPTIONS = ['references', 'ignore', 'rename_to', 'as', 'scale']
+      AVAILABLE_OPTIONS = ['references', 'ignore', 'rename_to', 'as', 'scale', 'polymorphic']
       
       # Auto detects if a column is an :key column or is a reference column
       def self.auto_detect(column)
@@ -256,7 +256,6 @@ module Mongify
         end
       end
 
-      
 
       # runs auto detect (see {Mongify::Database::Column.auto_detect})
       def run_auto_detect!

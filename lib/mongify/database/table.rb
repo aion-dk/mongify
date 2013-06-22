@@ -117,7 +117,7 @@ module Mongify
       
       # Returns a array of Columns which reference other columns
       def reference_columns
-        @columns.reject{ |c| !c.referenced? } 
+        @columns.reject{ |c| !c.referenced? && !c.polymorphic }
       end
       
       # Returns a translated row
@@ -136,6 +136,10 @@ module Mongify
       def embed_in
         @options['embed_in'].to_s unless @options['embed_in'].nil?
       end
+
+      def embed_in_polymorphic
+        @options['embed_in_polymorphic'].try :to_s
+      end
       
       # Returns the type of embed it will be [object or array]
       def embed_as
@@ -151,13 +155,20 @@ module Mongify
       
       # Returns true if this is an embedded table
       def embedded?
-        embed_in.present?
+        embed_in.present? || embed_in_polymorphic.present?
       end
       
       # Returns the name of the target column to embed on
       def embed_on
         return nil unless embedded?
-        (@options['on'] || "#{@options['embed_in'].to_s.singularize}_id").to_s
+        on = @options['on'] 
+        on ||= if @options['embed_in']
+          "#{@options['embed_in'].to_s.singularize}_id"
+        elsif @options['embed_in_polymorphic']
+          "#{@options['embed_in_polymorphic']}_id"
+        end
+
+        on.to_s
       end
       
       # Used to save a block to be ran after the row has been processed but before it's saved to the no sql database
