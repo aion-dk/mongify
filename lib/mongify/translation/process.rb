@@ -63,7 +63,6 @@ module Mongify
               t.embed_in
             end
 
-            puts "Embed polymorphic: type_column: #{type_column} table_name: #{table_name}"
 
             next unless table_name
             target_row = no_sql_connection.find_one(table_name, {:pre_mongified_id => row[t.embed_on]})
